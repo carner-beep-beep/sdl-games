@@ -21,6 +21,10 @@ void run_game(){
 	SDL_Rect paddle_rect = { paddle_pos.x, paddle_pos.y, paddle_width,
 		paddle_height };
 
+	Vec2 ball_pos = { 400.0, 300.0 };
+	Vec2 ball_vel = { 10.0, 10.0 };
+	SDL_Rect ball_rect = { ball_pos.x, ball_pos.y, 20, 20};
+
 	Uint32 tick_count = 0;
 	SDL_Event event;
 
@@ -53,13 +57,35 @@ void run_game(){
 			paddle_pos.y += moving * 300.0f * delta_time;
 		}
 
-		paddle_rect.y = paddle_pos.y;
-
 		if(paddle_pos.y < 0){
 			paddle_pos.y = 0;
 		}else if(paddle_pos.y + paddle_height > 600){
 			paddle_pos.y = 600 - paddle_height;
 		}
+
+		ball_pos.x += ball_vel.x * delta_time;
+		ball_pos.y += ball_vel.y * delta_time;
+
+		if(ball_pos.x < 0){
+			ball_pos.x = 0;
+			ball_vel.x = ball_vel.x * -1;
+		}else if(ball_pos.x + 20 > 800){
+			ball_pos.x = 800 - 20;
+			ball_vel.x = ball_vel.x * -1;
+		}
+
+		if(ball_pos.y < 0){
+			ball_pos.y = 0;
+			ball_vel.y *= -1;
+		}else if(ball_pos.y + 20 > 600){
+			ball_pos.y = 600 - 20;
+			ball_vel.y *= -1;
+		}
+
+		ball_rect.x = ball_pos.x;
+		ball_rect.y = ball_pos.y;
+		
+		paddle_rect.y = paddle_pos.y;
 		// Draw
 
 		SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
@@ -67,6 +93,8 @@ void run_game(){
 
 		SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 		SDL_RenderFillRect(renderer, &paddle_rect);
+
+		SDL_RenderFillRect(renderer, &ball_rect);
 
 		SDL_RenderPresent(renderer);
 	}
